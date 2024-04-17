@@ -1,0 +1,232 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root {
+  --jet-black: #0A0A0A;
+  --jet-black-trans: #0A0A0A20;
+  --accent-color: #FFFFFF;
+  --action-color: #d4abe7;
+  --action-dark: #815496;
+  --background-color: #E4E4E7;
+  --soft-color: #8D8D8D;
+  --color-hold: #d4d4d8;
+  --color-watch: #bef264;
+  --color-fin: #d8b4fe;
+  --color-remove: #fca5a5;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: var(--jet-black);
+}
+
+body {
+  font-family: "Poppins", 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100vh;
+  position: relative;
+  background-color: var(--background-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.inactive {
+  display: none !important;
+}
+
+.header {
+  padding: 10px 30px;
+  width: 100%;
+  background-color: var(--accent-color);
+  box-shadow: 0px 5px 10px #00000015;
+}
+
+.accent-title {
+  font-size: 2em;
+  text-decoration: none;
+  color: var(--jet-black);
+}
+
+.main {
+  flex: 1;
+  padding: 30px 50px 10px;
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.form-open {
+  padding: 5px 20px;
+  background-color: transparent;
+  border: none;
+  font-size: 1.5em;
+  font-weight: 600;
+  border-radius: 20px;
+  margin: 0 0 20px 0;
+}
+
+.form-open:hover {
+  background-color: rgba(0, 0, 0, 0.09);
+}
+
+.form-open:active {
+  background-color: rgba(0, 0, 0, 0.18);
+}
+
+.add-title-form {
+  position: absolute;
+  z-index: 9999;
+  top: 100px;
+  left: 0; 
+  right: 0; 
+  margin-left: auto; 
+  margin-right: auto;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+  background-color: var(--accent-color);
+  gap: 20px;
+  border-radius: 20px;
+  box-shadow: 0px 5px 10px #00000015;
+}
+
+.form-heading {
+  display: flex;
+  width: 100%;
+  padding: 0 5px;
+  justify-content: space-between;
+}
+
+.form-close:hover {
+  filter: contrast(20%);
+  cursor: pointer;
+}
+
+.add-title-form > input {
+  padding: 4px 15px;
+  border: 2px solid var(--jet-black-trans);
+  border-radius: 15px;
+  font-weight: 500;
+  font-size: 1em;
+}
+
+.add-title-form > input[type="submit"] {
+  background-color: var(--action-color);
+  font-weight: 700;
+  color: var(--action-dark);
+}
+
+.add-title-form > input[type="submit"]:hover {
+  filter: contrast(90%);
+}
+
+.form-title {
+  font-size: 36px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  background-color: #00000030;
+}
+
+.cards-container {
+  place-items: stretch stretch;
+  padding: 15px;
+  width: 100%;
+  display: grid;
+  gap: 25px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.card-status {
+  text-align: center;
+  padding: 1px 20px;
+  border-radius: 20px 20px 0 0;
+  background-color: var(--accent-color);
+}
+
+.card-content {
+  background-color: var(--accent-color);
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.card-buttons {
+  border-radius: 0 0 20px 20px;
+  background-color: var(--accent-color);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 10px 15px;
+}
+
+.card-buttons > button {
+  font-size: 20px;
+  border: none;
+  border-radius: 15px;
+  padding: 4px 20px;
+  font-weight: 500;
+}
+
+.card-buttons > button:hover {
+  filter: contrast(90%);
+}
+
+.remove-anime {
+  background-color: var(--color-remove);
+}
+
+.watch {
+  background-color: var(--color-watch);
+}
+
+.hold {
+  background-color: var(--color-hold);
+}
+
+.finished {
+  background-color: var(--color-fin);
+}
+
+@media (max-width: 756px) {
+  .header {
+    padding: 10px 0;
+    text-align: center;
+  }
+
+  .main {
+    padding: 30px 15px 10px;
+  }
+}
