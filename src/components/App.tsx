@@ -1,12 +1,120 @@
 import React from 'react';
-import { Anime, Status } from '../interfaces'
+import { Anime, Status } from '../interfaces';
+import { signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, User } from 'firebase/auth';
+import { collection, doc, setDoc, getDoc } from 'firebase/firestore';
+import { db, auth } from '../config';
 
-const Main:React.FC = () => {
+const App:React.FC = () => {
   const [list, setList] = React.useState<Anime[]>([]);
+  const [user, setUser] = React.useState<User | null>(null);
+  const [loading, setLoading] = React.useState<boolean>(false);
+
+  const collectionRef = collection(db, 'usersLists');
 
   const addAnimeToList = (newAnime: Anime) => {
     setList([...list, newAnime]);
   };
+
+  const saveList = async () => {
+    if (user === null) {
+      localStorage.setItem("list", JSON.stringify(list));
+    } else {
+      try {
+        const userRef = doc(collectionRef, user.uid);
+        await setDoc(userRef, { email: user.email, list: JSON.stringify(list) }).then(() => { console.log("added"); } );
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+
+  const loadList = async () => {
+    if (auth.currentUser === null) {
+      if (localStorage.getItem("list") != null) {
+        setList(JSON.parse(localStorage.getItem("list") as string));
+      }
+    } else {
+      const userRef = doc(collectionRef, auth.currentUser?.uid);
+      setLoading(true);
+      await getDoc(userRef)
+            .then((docSnap) => {
+              if (docSnap.exists()) {
+                if (docSnap.data()?.email == auth.currentUser?.email) {
+                  setList(docSnap.data()?.list != "" ? JSON.parse(docSnap.data().list) : []);
+                }
+              } else {
+                setDoc(userRef, { email: auth.currentUser?.email, list: []});
+              }
+            })
+            .finally(() => {
+              setLoading(false);
+            });
+    }
+  }
+
+  React.useEffect(() => { 
+    onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      loadList();
+    });
+  }, [auth]);
+
+  const register = async () => {
+    try {
+      let email = (document.querySelector("#emailInput") as HTMLFormElement)?.value;
+      let password = (document.querySelector("#passwordInput") as HTMLFormElement)?.value;
+      await createUserWithEmailAndPassword(auth, email, password);
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const login = async () => {
+    try {
+      let email = (document.querySelector("#emailInput") as HTMLFormElement)?.value;
+      let password = (document.querySelector("#passwordInput") as HTMLFormElement)?.value;
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const logout = async () => {
+    await signOut(auth);
+  }
+
+  const User:React.FC = () => {
+    return (
+      <div className="user">
+        <p>{user?.email}</p>
+        <button className="login-button" onClick={logout}>Logout</button>
+      </div>
+    );
+  }
+  
+  const Login:React.FC = () => {
+    return (
+      <div className="login-form">
+        <input type="email" placeholder="Email" id="emailInput" className="login-input"/>
+        <input type="password" placeholder="Password" id="passwordInput" className="login-input"/>
+        <button className="login-button" onClick={register}>Register</button>
+        <button className="login-button" onClick={login}>Login</button>
+      </div>
+    );
+  }
+
+
+  
+  const Header:React.FC = () => {
+    return (
+      <header className="header">
+        <h1>AWL</h1>
+        { user !== null && <User /> }
+        { user === null && <Login /> }
+      </header>
+    )
+  }
 
   const CardsContainer:React.FC = () => {
     return (
@@ -28,6 +136,7 @@ const Main:React.FC = () => {
         list[index].status = Status.Finished;
 
       setList([...list]);
+      saveList();
     }
 
     function switchHold(index: number) {
@@ -39,11 +148,13 @@ const Main:React.FC = () => {
         list[index].status = Status.Watching;
   
       setList([...list]);
+      saveList();
     }
 
     function removeAnime(index: number) {
       list.splice(index, 1);
       setList([...list]);
+      saveList();
     }
 
     let status: string;
@@ -106,6 +217,7 @@ const Main:React.FC = () => {
       }
       
       addAnimeToList(newAnime);
+      saveList();
       target.reset();
     }
 
@@ -175,12 +287,24 @@ const Main:React.FC = () => {
     )
   }
 
+  const Loading:React.FC = () => {
+    return (
+      <div className="loading">
+        Loading...
+      </div>
+    );
+  }
+
   return (
-    <main className="main">
-      <CardsContainer />
-      <Form />
-    </main>
+    <>
+      { loading && <Loading /> }
+      <Header />
+      <main className="main">
+        <CardsContainer />
+        <Form />
+      </main>
+    </>
   );
 }
 
-export default Main;
+export default App;
